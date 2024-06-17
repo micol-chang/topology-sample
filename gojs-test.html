@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GoJS Network Topology Example</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gojs/2.1.55/go.js"></script>
+  <style>
+    #myDiagramDiv {
+      width: 800px;
+      height: 600px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <div id="myDiagramDiv"></div>
+
+  <script>
+    // Create a Diagram in the HTML div element
+    var $ = go.GraphObject.make;
+    var myDiagram = $(go.Diagram, "myDiagramDiv", {
+      initialContentAlignment: go.Spot.Center,
+      "undoManager.isEnabled": true
+    });
+
+    // Define the Node template
+    myDiagram.nodeTemplate =
+      $(go.Node, "Auto",
+        $(go.Shape, "Ellipse", {
+          fill: "lightblue",
+          stroke: "black"
+        }),
+        $(go.TextBlock, { margin: 10 }, new go.Binding("text", "key"))
+      );
+
+    // Define the Link template
+    myDiagram.linkTemplate =
+      $(go.Link,
+        $(go.Shape, { strokeWidth: 2 }),
+        $(go.Shape, { toArrow: "Standard" })
+      );
+
+    // Create the model data
+    myDiagram.model = new go.GraphLinksModel(
+      [
+        { key: "A", loc: "0 0" },
+        { key: "B", loc: "200 0" },
+        { key: "C", loc: "200 200" },
+        { key: "D", loc: "0 200" },
+        { key: "E", loc: "400 0" },
+        { key: "F", loc: "400 200" }
+      ],
+      [
+        { from: "A", to: "B" },
+        { from: "A", to: "D" },
+        { from: "B", to: "C" },
+        { from: "C", to: "D" },
+        { from: "B", to: "E" },
+        { from: "C", to: "F" },
+        { from: "E", to: "F" }
+      ]
+    );
+
+    // Position the nodes based on the "loc" property in the model
+    myDiagram.nodeTemplate =
+      $(go.Node, "Auto",
+        { locationSpot: go.Spot.Center },
+        new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+        $(go.Shape, "Ellipse", { fill: "lightblue" }),
+        $(go.TextBlock, { margin: 5 }, new go.Binding("text", "key"))
+      );
+  </script>
+</body>
+</html>

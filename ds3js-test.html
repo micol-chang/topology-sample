@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3.js Example</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1>D3.js Network Topology Example</h1>
+    <svg width="800" height="600"></svg>
+    <script>
+        const svg = d3.select("svg");
+        const nodes = [
+            { id: "A", x: 100, y: 300 },
+            { id: "B", x: 300, y: 100 },
+            { id: "C", x: 300, y: 500 },
+            { id: "D", x: 500, y: 300 },
+            { id: "E", x: 700, y: 100 },
+            { id: "F", x: 700, y: 500 }
+        ];
+
+        const links = [
+            { source: "A", target: "B" },
+            { source: "A", target: "C" },
+            { source: "B", target: "D" },
+            { source: "C", target: "D" },
+            { source: "D", target: "E" },
+            { source: "D", target: "F" },
+            { source: "E", target: "F" }
+        ];
+
+        const link = svg.selectAll(".link")
+            .data(links)
+            .enter().append("line")
+            .attr("class", "link")
+            .attr("x1", d => nodes.find(n => n.id === d.source).x)
+            .attr("y1", d => nodes.find(n => n.id === d.source).y)
+            .attr("x2", d => nodes.find(n => n.id === d.target).x)
+            .attr("y2", d => nodes.find(n => n.id === d.target).y)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);
+
+        const node = svg.selectAll(".node")
+            .data(nodes)
+            .enter().append("circle")
+            .attr("class", "node")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", 20)
+            .attr("fill", "blue");
+
+        const labels = svg.selectAll(".label")
+            .data(nodes)
+            .enter().append("text")
+            .attr("class", "label")
+            .attr("x", d => d.x)
+            .attr("y", d => d.y)
+            .attr("dy", -25)
+            .attr("text-anchor", "middle")
+            .text(d => d.id);
+    </script>
+</body>
+</html>
