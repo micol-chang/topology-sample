@@ -1,0 +1,63 @@
+
+## 작업 경로로 이동
+PS C:\> cd C:\tango\docker\nginx-map
+
+## 필요한 추가 파일 작업
+PS C:\tango\docker\nginx-map>
+
+
+## docker 이미지 환경 설정
+PS C:\tango\docker\nginx-map> notepad C:\tango\docker\nginx-map\Dockerfile
+# C:\tango\docker\nginx-map\Dockerfile
+FROM nginx:latest
+
+COPY ./index.html /usr/share/nginx/html/index.html
+COPY ./favicon.ico /usr/share/nginx/html/favicon.ico
+COPY ./tango-transmission-web /usr/share/nginx/html/tango-transmission-web
+COPY ./tango-common-business-web /usr/share/nginx/html/tango-common-business-web
+
+## docker 이미지 생성 실행
+PS C:\tango\docker\nginx-map> docker build -t nginx-map-image .
+
+
+## docker 콘테이너 실행 환경 설정
+PS C:\tango\docker\nginx-map> notepad C:\tango\docker\nginx-map\docker-compose.yml
+# C:\tango\docker\nginx-map\docker-compose.yml
+version: '3'
+services:
+  web:
+    image: nginx-map-image
+    ports:
+      - "80:80"
+    container_name: nginxmapcont
+
+## docker 콘테이너 생성 실행(docker-compose 파일 사용)
+PS C:\tango\docker\nginx-map> docker-compose up -d
+
+
+## docker 콘테이너 생성 실행(docker-compose 파일 사용)
+PS C:\tango\docker\nginx-map> docker run --name nginxmapcont -p 80:80 -d nginx-map-image
+
+
+## 실행중인 콘테이너에 파일 복사
+PS C:\> docker cp C:\tango\docker\nginx-map\index.html nginxmapcont:/usr/share/nginx/html/index.html
+PS C:\> docker cp C:\tango\docker\nginx-map\script.js  nginxmapcont:/usr/share/nginx/html/script.js
+PS C:\> docker cp C:\tango\docker\nginx-map\tango-transmission-web  nginxmapcont:/usr/share/nginx/html/tango-transmission-web
+
+## docker container 명령
+docker stop nginxmapcont
+docker rm nginxmapcont
+
+docker start nginxmapcont
+docker stop nginxmapcont
+
+docker restart nginxmapcont
+
+## docker compose 이름으로 재시작
+docker-compose restart web
+
+## docker compose 전체 재시작
+docker-compose restart
+
+## docker image 삭제
+docker rmi nginx-map-image
